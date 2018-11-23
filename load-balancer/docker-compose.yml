@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - "./config:/etc/nginx/conf.d"
+    networks:
+      - public
+    deploy:
+      replicas: 1
+
+networks:
+  public:
+    external: true

@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+
+  db:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=changeme
+      - MYSQL_USER=etherpad
+      - MYSQL_PASSWORD=changeme
+      - MYSQL_DATABASE=etherpad
+    volumes:
+        - "/swarm/volumes/etherpad-db:/var/lib/mysql"
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.persistent == true
+
+  web:
+    image: tvelocity/etherpad-lite
+    environment:
+      - ETHERPAD_DB_HOST=db
+      - ETHERPAD_DB_USER=etherpad
+      - ETHERPAD_DB_PASSWORD=changeme
+    networks:
+      - backend
+      - public
+    ports:
+        - "9001:9001"
+    depends_on:
+      - database
+    deploy:
+      replicas: 1
+
+networks:
+  backend:
+  public:
+    external: true
